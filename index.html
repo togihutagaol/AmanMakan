@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aman Makan — Cek, Lapor, Edukasi Keamanan Pangan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nav" id="nav">
+  <a href="#beranda" class="brand"><span class="logo">🛡️</span>Aman Makan</a>
+  <nav id="menu">
+    <a href="#lapor">Lapor</a><a href="#peta">Peta</a><a href="#pengingat">Pengingat</a><a href="#edukasi">Edukasi</a><a href="#status">Status</a>
+  </nav>
+  <div class="nav-r">
+    <button class="icon-btn" id="bell" aria-label="Notifikasi">🔔<span class="dot" id="bellDot" hidden></span></button>
+    <button class="btn sm" id="openAuth">Masuk</button>
+    <button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="beranda">
+  <div class="hero-t">
+    <p class="pill">Pangan Aman · Tubuh Sehat · Masa Depan Kuat</p>
+    <h1>Cek pangannya,<br>jaga kesehatanmu.</h1>
+    <p class="lead">Laporkan makanan kedaluwarsa, terkontaminasi, atau tempat makan yang tidak higienis, sambil belajar cara memilih dan menyimpan makanan dengan aman.</p>
+    <div class="cta"><a href="#lapor" class="btn">Buat laporan</a><a href="#pengingat" class="btn ghost">Atur pengingat</a></div>
+    <div class="stats">
+      <div><b data-count="reports">0</b><span>Laporan masuk</span></div>
+      <div><b data-count="reminders">0</b><span>Pengingat aktif</span></div>
+      <div><b data-count="5">0</b><span>Kategori masalah</span></div>
+    </div>
+  </div>
+  <div class="hero-v" aria-hidden="true">
+    <div class="phone">
+      <div class="ph-top">Halo, Pengguna! 👋</div>
+      <div class="ph-grid">
+        <div style="--c:#2f9e6b">📖<small>Edukasi</small></div>
+        <div style="--c:#f59e0b">🔍<small>Cek Makanan</small></div>
+        <div style="--c:#8b5cf6">⏰<small>Pengingat</small></div>
+        <div style="--c:#3b82f6">📋<small>Pelaporan</small></div>
+      </div>
+    </div>
+    <span class="float f1" style="--c:#e5484d">Kedaluwarsa</span>
+    <span class="float f2" style="--c:#2f9e6b">Terkontaminasi</span>
+    <span class="float f3" style="--c:#3b82f6">Tidak higienis</span>
+    <span class="float f4" style="--c:#f5b301">Penyimpanan</span>
+  </div>
+</section>
+
+<section class="sec" id="lapor">
+  <div class="head"><h2>Lapor masalah pangan</h2><p>Pilih kategori, isi lokasi dan keterangan, tambahkan foto bila ada.</p></div>
+  <div class="grid2">
+    <form id="reportForm" class="card form" novalidate>
+      <label>Kategori masalah</label>
+      <div class="chips" id="chips"></div>
+      <label for="place">Nama tempat / produk</label>
+      <input id="place" placeholder="Contoh: Kedai X, Jl. Gatot Subroto" required>
+      <label for="loc">Lokasi</label>
+      <div class="row"><input id="loc" placeholder="Klik peta atau pakai lokasi saya" readonly><button type="button" class="btn ghost sm" id="geo">📍 Lokasi saya</button></div>
+      <label for="desc">Keterangan</label>
+      <textarea id="desc" rows="4" placeholder="Ceritakan kondisi yang kamu lihat…" required></textarea>
+      <label>Foto (opsional)</label>
+      <label class="drop" id="drop"><input type="file" id="photo" accept="image/*" hidden><span id="dropT">📷 Ketuk untuk unggah foto</span><img id="prev" alt="" hidden></label>
+      <p class="hint">Aplikasi hanya meminta izin foto dan lokasi saat kamu menekan tombolnya.</p>
+      <button class="btn block" type="submit">Kirim laporan</button>
+    </form>
+    <aside class="card guide" id="guide"></aside>
+  </div>
+  <p class="note">Aplikasi membantu menyampaikan informasi awal. Penilaian keamanan pangan dan keputusan penanganan tetap memerlukan pemeriksaan pihak berwenang.</p>
+</section>
+
+<section class="sec alt" id="peta">
+  <div class="head"><h2>Peta laporan</h2><p>Titik masalah dari laporan yang dimasukkan pengguna. Klik peta untuk memilih lokasi laporan baru.</p></div>
+  <div class="map-wrap"><div id="map"></div><div class="legend" id="legend"></div></div>
+</section>
+
+<section class="sec" id="pengingat">
+  <div class="head"><h2>Pengingat kedaluwarsa</h2><p>Catat makanan yang kamu punya agar tidak terlewat tanggalnya.</p></div>
+  <div class="grid2">
+    <form id="remForm" class="card form">
+      <label for="rn">Nama makanan</label><input id="rn" placeholder="Contoh: Telur, susu, roti" required>
+      <label for="rd">Tanggal kedaluwarsa</label><input id="rd" type="date" required>
+      <button class="btn block" type="submit">Simpan pengingat</button>
+    </form>
+    <div class="card"><div class="tabs" id="remTabs"><button class="on" data-f="all">Semua</button><button data-f="soon">Segera</button><button data-f="exp">Lewat</button></div><ul class="list" id="remList"></ul></div>
+  </div>
+</section>
+
+<section class="sec alt" id="edukasi">
+  <div class="head"><h2>Edukasi &amp; tips hidup sehat</h2><p>Bahasa sederhana untuk kebiasaan makan yang lebih aman.</p></div>
+  <div class="tabs c" id="eduTabs"><button class="on" data-f="all">Semua</button><button data-f="label">Label</button><button data-f="bersih">Kebersihan</button><button data-f="simpan">Penyimpanan</button><button data-f="masak">Pengolahan</button></div>
+  <div class="edu" id="edu"></div>
+  <div class="alert"><div class="ai">⚠️</div><div><h3>Waspadai gejala keracunan makanan</h3><p>Mual dan muntah, diare, sakit perut, demam. Segera cari pertolongan medis bila gejala tidak membaik dalam 24 jam atau semakin berat.</p></div><button class="btn danger" id="helpBtn">Hubungi fasilitas kesehatan</button></div>
+</section>
+
+<section class="sec" id="status">
+  <div class="head"><h2>Status laporan</h2><p>Simulasi alur: terkirim, ditinjau, lalu ditindaklanjuti. Belum terhubung ke petugas sungguhan.</p></div>
+  <div class="reports" id="reports"></div>
+</section>
+
+<section class="sec alt priv">
+  <div class="head"><h2>Privasi &amp; manfaat</h2></div>
+  <div class="benefit">
+    <div class="card"><h3>👪 Warga</h3><p>Lapor lebih mudah, panduan memilih dan mengonsumsi makanan.</p></div>
+    <div class="card"><h3>🧑‍⚖️ Petugas</h3><p>Informasi awal jenis dan lokasi masalah.</p></div>
+    <div class="card"><h3>🩺 Kesehatan masyarakat</h3><p>Mendukung edukasi pencegahan penyakit akibat pangan.</p></div>
+    <div class="card"><h3>🎓 Mahasiswa</h3><p>Contoh teknologi untuk promosi kesehatan.</p></div>
+  </div>
+  <p class="note">Data pribadi dibatasi, izin foto dan lokasi diminta sebelum diakses, dan data tidak ditampilkan terbuka bila tidak diperlukan.</p>
+</section>
+</main>
+
+<footer><b>Aman Makan</b> · Konsep tugas Teknologi Kesehatan — Novita Hutasoit</footer>
+
+<div class="modal" id="modal" hidden>
+  <form class="card box" id="authForm">
+    <button type="button" class="x" id="closeAuth" aria-label="Tutup">✕</button>
+    <h3 id="authT">Masuk ke Aman Makan</h3>
+    <input id="an" placeholder="Nama" hidden><input type="email" id="ae" placeholder="Email" required><input type="password" id="ap" placeholder="Kata sandi" required minlength="4">
+    <button class="btn block">Lanjut</button>
+    <p class="hint"><a href="#" id="swAuth">Belum punya akun? Daftar</a></p>
+  </form>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
